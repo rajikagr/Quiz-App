@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+        body {
+            background: #001e4d;
+        }
+        .app {
+            background: #fff;
+            width: 90%;
+            max-width: 600px;
+            margin: 100px auto 0;
+            border-radius: 10px;
+            padding: 30px;
+        }
+        .app h1 {
+            font-size: 25px;
+            color: #001e4d;
+            font-weight: 600;
+            border-bottom: 1px solid #333;
+            padding-bottom: 30px;
+        }
+        .quiz {
+            padding: 20px 0;
+        }
+        .quiz h2 {
+            font-size: 18px;
+            color: #001e4d;
+            font-weight: 600;
+        }
+        .btn {
+            background: #fff;
+            color: #222;
+            font-weight: 500;
+            width: 100%;
+            border: 1px solid #222;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: left;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover:not([disabled]) {
+            background: #222;
+            color: #fff;
+        }
+        .btn:disabled {
+            cursor: no-drop;
+        }
+        #next-btn {
+            background: #001e4d;
+            color: #fff;
+            font-weight: 500;
+            width: 150px;
+            border: 0;
+            padding: 10px;
+            margin: 20px auto 0;
+            border-radius: 4px;
+            cursor: pointer;
+            display: none;
+        }
+        .correct {
+            background: #9aeabc;
+        }
+        .incorrect {
+            background: #ff9393;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <h1>Simple Quiz</h1>
+        <div class="quiz">
+            <h2 id="question">Question goes here</h2>
+            <div id="answer-buttons">
+                <!-- Answer buttons will be dynamically added here -->
+            </div>
+            <button id="next-btn">Next</button>
+        </div>
+    </div>
+    <script>
+        const questions =  [
+            {
+               //q1
+                question: "<sup>3</sup>/<sub>13</sub> × <sup>325</sup>/<sub>3<sup>-3</sup></sub> × ? = 25 × 103 × 1.54",
+                answers: [
+                    { text: "125", correct: false},
+                    { text: "375", correct: false},
+                    { text: "62.5", correct: true}, 
+                    { text: "112.5", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+               //q2
+                question: "(13456 – 712) ÷ 27<sup>2</sup> = ? ÷ 3 ÷ 3 ÷ 3 ÷ 2",
+                answers: [
+                    { text: "472", correct: false},
+                    { text: "236", correct: false},
+                    { text: "832", correct: false}, 
+                    { text: "944", correct: true},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+               //q3
+                question: "0.16 × 55 × 180 + ?<sup>2</sup> = 12<sup>3</sup>",
+                answers: [
+                    { text: "484", correct: false},
+                    { text: "&pm;12", correct: true},
+                    { text: "&pm;22", correct: false}, 
+                    { text: "32", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+               //q4
+                question: "1.25 × 844 + 0.5 × 432 + ? = 2500",
+                answers: [
+                    { text: "1229", correct: false},
+                    { text: "1341", correct: true},
+                    { text: "1339", correct: false}, 
+                    { text: "1489", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+               //q5
+                question: "75% of 12<sup>2</sup> + ? = 40% of 600",
+                answers: [
+                    { text: "145", correct: false},
+                    { text: "132", correct: true},
+                    { text: "112", correct: false}, 
+                    { text: "158", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+               //q6
+                question: "(√?)<sup>6</sup> + (√30)<sup>4</sup> = 2628",
+                answers: [
+                    { text: "144", correct: false},
+                    { text: "22", correct: false},
+                    { text: "484", correct: false}, 
+                    { text: "12", correct: true},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+               //q7
+                question: "27<sup>2/3</sup> + 216<sup>1/3</sup> + ? = 125<sup>2/3</sup>",
+                answers: [
+                    { text: "120", correct: false},
+                    { text: "-120", correct: false},
+                    { text: "10", correct: true}, 
+                    { text: "110", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+               //q8
+                question: "7 <sup>2</sup>/<sub>3</sub> of 15 + 9 <sup>1</sup>/<sub>6</sub> of 30 = 0.5 × ?",
+                answers: [
+                    { text: "710", correct: false},
+                    { text: "920", correct: false},
+                    { text: "780", correct: true}, 
+                    { text: "690", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+               //q9
+                question: "29 × ? = 1856 ÷ 4 ÷ 2",
+                answers: [
+                    { text: "4.4", correct: false},
+                    { text: "5.4", correct: false},
+                    { text: "6.6", correct: false}, 
+                    { text: "9.4", correct: false},
+                    { text: "None of these", correct: true},
+                ]
+            },{
+               //q10
+                question: "6587 – 2134 + 3125 = ? × 5<sup>3</sup> × 64 ÷ 2<sup>3</sup>",
+                answers: [
+                    { text: "75.87", correct: false},
+                    { text: "74.67", correct: false},
+                    { text: "7.467", correct: false}, 
+                    { text: "7.578", correct: true},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q11
+                question: "5% of 5<sup>2</sup> × 12<sup>2</sup> – 140 = 2 × ?",
+                answers: [
+                    { text: "15", correct: false},
+                    { text: "25", correct: false},
+                    { text: "20", correct: true}, 
+                    { text: "22", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q12
+                question: "2 <sup>5</sup>/<sub>13</sub>% of 5200 + 1 <sup>1</sup>/<sub>17</sub>% of 5100 = ?",
+                answers: [
+                    { text: "17800", correct: false},
+                    { text: "1780", correct: false},
+                    { text: "178", correct: true}, 
+                    { text: "17.8", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q13
+                question: "33 × ? ÷ 3 = 1.5 % of (2<sup>5</sup> × 5<sup>5</sup> × 363)",
+                answers: [
+                    { text: "425000", correct: false},
+                    { text: "405000", correct: false},
+                    { text: "42500", correct: false}, 
+                    { text: "40500", correct: false},
+                    { text: "None of these", correct: true},
+                ]
+            },{
+                //q14
+                question: "?% of (15360 ÷ 4) = 2<sup>11</sup>– 2<sup>9</sup>",
+                answers: [
+                    { text: "6", correct: false},
+                    { text: "60", correct: false},
+                    { text: "40", correct: true}, 
+                    { text: "80", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q15
+                question: "325 ÷ 13 × √784 = 10% of ?",
+                answers: [
+                    { text: "7000", correct: true},
+                    { text: "700", correct: false},
+                    { text: "1100", correct: false}, 
+                    { text: "900", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q16
+                question: "&#8731;(?) × 140 + 260 = 0.4<sup>2</sup> × 5125",
+                answers: [
+                    { text: "4", correct: false},
+                    { text: "8", correct: false},
+                    { text: "27", correct: false}, 
+                    { text: "64", correct: true},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q17
+                question: "√3136 × 7<sup>–2</sup> ÷ 5<sup>–5</sup> × 14 = ?",
+                answers: [
+                    { text: "50000", correct: true},
+                    { text: "54280", correct: false},
+                    { text: "52250", correct: false}, 
+                    { text: "50125", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q18
+                question: "25% of 624 + ? = 729 – 512",
+                answers: [
+                    { text: "61", correct: true},
+                    { text: "66", correct: false},
+                    { text: "55", correct: false}, 
+                    { text: "51", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q19
+                question: "8 <sup>1</sup>/<sub>7</sub> ÷ <sup>19</sup>/<sub>168</sub> × 167 <sup>1</sup>/<sub>3</sub> = (7<sup>2</sup> - 1) × ?",
+                answers: [
+                    { text: "502", correct: false},
+                    { text: "604", correct: false},
+                    { text: "251", correct: true}, 
+                    { text: "249", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q20
+                question: "<sup>4</sup>/<sub>7</sub> × <sup>9</sup>/<sub>14</sub> ÷ <sup>16></sup>/<sub>28</sub> + <sup>4</sup>/<sub>/</sub> – ? = 1", 
+                answers: [
+                    { text: "<sup>43</sup>/<sub>42</sub>", correct: false},
+                    { text: "<sup>41</sup>/<sub>42</sub>", correct: true},
+                    { text: "<sup>47</sup>/<sub>42</sub>", correct: false}, 
+                    { text: "<sup>37</sup>/<sub>42</sub>", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q21
+                question: "5 × √? = 735 ÷ 3", 
+                answers: [
+                    { text: "7", correct: false},
+                    { text: "49", correct: false},
+                    { text: "2401", correct: true}, 
+                    { text: "98", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q22
+                question: "20% of 2<sup>7</sup>+ 40% of 64 – ? = 0", 
+                answers: [
+                    { text: "51.20", correct: true},
+                    { text: "56.80", correct: false},
+                    { text: "42.36", correct: false}, 
+                    { text: "62.24", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q23
+                question: "(4.5 × 4.5 × 4.5 × 4.5) ÷ 225 ÷ 25 + 3<sup>3</sup> = ?", 
+                answers: [
+                    { text: "27.729", correct: false},
+                    { text: "277.29", correct: false},
+                    { text: "27.0729", correct: true}, 
+                    { text: "2772.90", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q24
+                question: "3 <sup>1</sup>/<sub>2</sub> × (<sup>(7 <sup>2</sup>/<sub>5</sub>)</sup>/<sub>(9 <sup>3</sup>/<sub>5</sub>)</sub>) × 8<sup>2</sup> × 60 = 2<sup>4</sup> × ?", 
+                answers: [
+                    { text: "624", correct: false},
+                    { text: "2364", correct: false},
+                    { text: "647.5", correct: true}, 
+                    { text: "1864", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q25
+                question: "(2<sup>3</sup> + 7<sup>2</sup>) ÷ 2 × 3 = ?", 
+                answers: [
+                    { text: "83.5", correct: false},
+                    { text: "87.5", correct: false},
+                    { text: "92.5", correct: false}, 
+                    { text: "85.5", correct: true},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q26
+                question: "17 <sup>1</sup>/<sub>3</sub> + 21 <sup>1</sup>/<sub>2</sub> = 33 <sup>1</sup>/<sub>3</sub>% of ?", 
+                answers: [
+                    { text: "116.5", correct: true},
+                    { text: "104.5", correct: false},
+                    { text: "112.33", correct: false}, 
+                    { text: "118.33", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q27
+                question: "<sup>(18 × <sup>8</sup>/<sub>15</sub> + 10% of 624)</sup>/<sub>?</sub> = 4", 
+                answers: [
+                    { text: "16", correct: false},
+                    { text: "18", correct: true},
+                    { text: "22", correct: false}, 
+                    { text: "24", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q28
+                question: "√(1024) × 40 + 20<sup>2</sup> + 0.5% of 9600 + 469 = ?<sup>3</sup>", 
+                answers: [
+                    { text: "23", correct: false},
+                    { text: "13", correct: true},
+                    { text: "17", correct: false}, 
+                    { text: "19", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q29
+                question: "4 <sup>3</sup>/<sub>5</sub>% of 6500 + 3 <sup>2</sup>/<sub>7</sub>% of 3500 = ?", 
+                answers: [
+                    { text: "424", correct: false},
+                    { text: "414", correct: true},
+                    { text: "418", correct: false}, 
+                    { text: "404", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q30
+                question: "4<sup>4</sup> + 5<sup>4</sup> + 10% of 8000 = ?<sup>2</sup>", 
+                answers: [
+                    { text: "1681", correct: false},
+                    { text: "16812", correct: false},
+                    { text: "41", correct: true}, 
+                    { text: "43", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q31
+                question: "13 <sup>2</sup>/<sub>3</sub>% of 3300 + 25% of 184 = 40% of ?", 
+                answers: [
+                    { text: "1242.5", correct: true},
+                    { text: "1361.5", correct: false},
+                    { text: "1124", correct: false}, 
+                    { text: "1220", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q32
+                question: "11 <sup>1</sup>/<sub>3</sub> of 117 + 13 <sup>3</sup>/<sub>5</sub> of 115 = ?", 
+                answers: [
+                    { text: "2890", correct: true},
+                    { text: "2676", correct: false},
+                    { text: "1852", correct: false}, 
+                    { text: "1658", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q33
+                question: "<sup>(12% of 273000)</sup>/<sub>(13% of 42)</sub> + <sup>(11% of 58500)</sup>/<sub>(13% of 45)</sub> = ?", 
+                answers: [
+                    { text: "61100", correct: false},
+                    { text: "71000", correct: false},
+                    { text: "6700", correct: false}, 
+                    { text: "7100", correct: true},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q34
+                question: "8125 ÷ 13 ÷ 2 <sup>1</sup>/<sub>2</sub> × 102 = ?", 
+                answers: [
+                    { text: "12500", correct: false},
+                    { text: "25000", correct: true},
+                    { text: "50000", correct: false}, 
+                    { text: "37500", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q35
+                question: " (2<sup>–3</sup> + 12.5% of 624) × 4<sup>4</sup> = 5<sup>3</sup> × ?", 
+                answers: [
+                    { text: "3200", correct: false},
+                    { text: "32", correct: false},
+                    { text: "160", correct: true}, 
+                    { text: "1600", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q36
+                question: "42.32 + 423.4 + 56.28 – 122.2 = ?", 
+                answers: [
+                    { text: "18.74", correct: false},
+                    { text: "128.72", correct: false},
+                    { text: "398.2", correct: false}, 
+                    { text: "399.8", correct: true},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q37
+                question: "45% of 480 + 1 <sup>1</sup>/<sub>8</sub> of 2160 + 2 <sup>1</sup>/<sub>3</sub> of 150 = ?", 
+                answers: [
+                    { text: "2996", correct: true},
+                    { text: "1448", correct: false},
+                    { text: "2024", correct: false}, 
+                    { text: "2848", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q38
+                question: "4 <sup>1</sup>/<sub>3</sub> + 6 <sup>1</sup>/<sub>5</sub> - 7 <sup>1</sup>/<sub>2</sub> = <sup>?</sup>/<sub>8</sub>", 
+                answers: [
+                    { text: "28.5", correct: false},
+                    { text: "32.2", correct: false},
+                    { text: "24.26", correct: true}, 
+                    { text: "26.8", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q39
+                question: "13<sup>2</sup> + 5<sup>3</sup> – 4<sup>4</sup> = 10% of ?", 
+                answers: [
+                    { text: "420", correct: false},
+                    { text: "360", correct: false},
+                    { text: "240", correct: false}, 
+                    { text: "300", correct: false},
+                    { text: "None of these", correct: true},
+                ]
+            },{
+                //q40
+                question: "729<sup>2</sup> ÷ 6<sup>3</sup> × 27<sup>8</sup> = 27<sup>?+6</sup> ÷ 216", 
+                answers: [
+                    { text: "6", correct: true},
+                    { text: "9", correct: false},
+                    { text: "15", correct: false}, 
+                    { text: "5", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q41
+                question: "(4698 – 3625 – 857) = ?<sup>3</sup> – 42 – √(7225)", 
+                answers: [
+                    { text: "1242.5", correct: false},
+                    { text: "1361.5", correct: false},
+                    { text: "1124", correct: true}, 
+                    { text: "1220", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q42
+                question: "<sup>?</sup>/<sub>37</sub> = <sup>15</sup>/<sub>?</sub> × <sup>1</sup>/<sub>2145</sub> × <sup>1</sup>/<sub>9.25</sub> × 676 × 143", 
+                answers: [
+                    { text: "36", correct: false},
+                    { text: "26", correct: false},
+                    { text: "69", correct: false}, 
+                    { text: "55", correct: false},
+                    { text: "None of these", correct: true},
+                ]
+            },{
+                //q43
+                question: "√441 × (985.35 – 969.35) = ?<sup>1/2</sup> + 305", 
+                answers: [
+                    { text: "324", correct: false},
+                    { text: "900", correct: false},
+                    { text: "1225", correct: false}, 
+                    { text: "961", correct: true},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q44
+                question: "6992 ÷ 19 – ?% of 652 = – 4196", 
+                answers: [
+                    { text: "700", correct: true},
+                    { text: "600", correct: false},
+                    { text: "300", correct: false}, 
+                    { text: "800", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q45
+                question: "[<sup>3</sup>/<sub>2</sub> + <sup>1</sup>/<sub>2</sub> {<sup>3</sup>/<sub>4</sub> - <sup>1</sup>/<sub>2</sub> ( <sup>7</sup>/<sub>8</sub> - <sup>3</sup>/<sub>4</sub> )}] = ?", 
+                answers: [
+                    { text: "<sup>59</sup>/<sub>15</sub>", correct: false},
+                    { text: "<sup>59</sup>/<sub>32</sub>", correct: true},
+                    { text: "<sup>59</sup>/<sub>37</sub>", correct: false}, 
+                    { text: "<sup>58</sup>/<sub>11</sub>", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q46
+                question: "(4863 – √2601) × 1.5 = ?", 
+                answers: [
+                    { text: "7200", correct: false},
+                    { text: "7218", correct: true},
+                    { text: "7250", correct: false}, 
+                    { text: "7128", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q47
+                question: "38% of 295 + 62% of 445 = ?", 
+                answers: [
+                    { text: "386", correct: false},
+                    { text: "388", correct: true},
+                    { text: "380", correct: false}, 
+                    { text: "381", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q48
+                question: "1 <sup>1</sup>/<sub>7</sub> - 1 <sup>1</sup>/<sub>9</sub> + 1 <sup>1</sup>/<sub>63</sub> = ?", 
+                answers: [
+                    { text: "1 <sup>2</sup>/<sub>63</sub>", correct: false},
+                    { text: "1 <sup>1</sup>/<sub>21</sub>", correct: true},
+                    { text: "2 <sup>1</sup>/<sub>21</sub>", correct: false}, 
+                    { text: "1 <sup>4</sup>/<sub>63</sub>", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q49
+                question: "6150% of 300 + ?% of 500 = 800", 
+                answers: [
+                    { text: "60", correct: false},
+                    { text: "70", correct: true},
+                    { text: "50", correct: false}, 
+                    { text: "75", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },{
+                //q50
+                question: "6318 ÷ &#8731;(17576) = √? × 9", 
+                answers: [
+                    { text: "643", correct: false},
+                    { text: "729", correct: true},
+                    { text: "743", correct: false}, 
+                    { text: "629", correct: false},
+                    { text: "None of these", correct: false},
+                ]
+            },           
+        ];
+
+        const questionElement = document.getElementById("question");
+        const answerButtons = document.getElementById("answer-buttons");
+        const nextButton = document.getElementById("next-btn");
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function startQuiz(){
+            currentQuestionIndex = 0;
+            score = 0;
+            nextButton.innerHTML = "Next";
+            showQuestion();
+        }
+
+        function showQuestion(){
+            resetState();
+            let currentQuestion = questions[currentQuestionIndex];
+            let questionNo = currentQuestionIndex + 1;
+            questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement("button");
+                button.innerHTML = answer.text;
+                button.classList.add("btn");
+                answerButtons.appendChild(button);
+                if(answer.correct){
+                    button.dataset.correct = answer.correct;
+                }
+                button.addEventListener("click", selectAnswer);
+            });
+        }
+
+        function resetState(){
+            nextButton.style.display = "none";
+            while(answerButtons.firstChild){
+                answerButtons.removeChild(answerButtons.firstChild);
+            }
+        }
+
+        function selectAnswer(e){
+            const selectedBtn = e.target;
+            const isCorrect = selectedBtn.dataset.correct === "true";
+            if(isCorrect){
+                selectedBtn.classList.add("correct");
+                score++;
+            }else{
+                selectedBtn.classList.add("incorrect");
+            }
+            Array.from(answerButtons.children).forEach(button => {
+                if(button.dataset.correct === "true"){
+                    button.classList.add("correct");
+                }
+                button.disabled = true;
+            });
+            nextButton.style.display = "block";
+        }
+
+        function showScore(){
+            resetState();
+            questionElement.innerHTML = `You scored ${score} out of ${questions.length}!`;
+            nextButton.innerHTML = "Play Again";
+            nextButton.style.display = "block";
+        }
+        function handleNextButton(){
+            currentQuestionIndex++;
+            if(currentQuestionIndex < questions.length){
+                showQuestion();
+            }else{
+                showScore();
+            }
+        }
+
+        nextButton.addEventListener("click", ()=> {
+            if(currentQuestionIndex < questions.length){
+                handleNextButton();
+            }else{
+                startQuiz();
+            }
+        });
+
+        startQuiz();
+    </script>
+</body>
+</html>
